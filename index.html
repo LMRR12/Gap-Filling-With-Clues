@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H.S.C Cloze Test Practice Application</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        select {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.secondary {
+            background-color: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        button.secondary:hover {
+            background-color: #f1f5f9;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .meta-info {
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+        }
+
+        .clue-box {
+            background-color: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.5rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .clue-item {
+            background: white;
+            padding: 0.375rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border);
+        }
+
+        .passage {
+            font-size: 1.125rem;
+            line-height: 2.2;
+            text-align: justify;
+            margin-bottom: 2rem;
+        }
+
+        .gap-input {
+            width: 120px;
+            padding: 0.2rem 0.5rem;
+            margin: 0 0.25rem;
+            border: 1px solid #94a3b8;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+
+        .gap-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .gap-label {
+            font-weight: bold;
+            color: #475569;
+            margin-right: 0.125rem;
+        }
+
+        .action-zone {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .result-panel {
+            font-size: 1.25rem;
+            font-weight: bold;
+            display: none;
+        }
+
+        .correct-ans {
+            background-color: #dcfce7 !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+        }
+
+        .wrong-ans {
+            background-color: #fee2e2 !important;
+            border-color: var(--danger) !important;
+            color: var(--danger) !important;
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border);
+            display: none;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .review-item {
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 3rem;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <h1>Cloze Test Practice Portal (H.S.C)</h1>
+            <div class="nav-controls">
+                <button id="prevBtn" class="secondary">Previous</button>
+                <select id="questionSelector"></select>
+                <button id="nextBtn" class="secondary">Next</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="card">
+            <div class="meta-info" id="metaInfo">Question 1 of 95</div>
+            <div class="clue-box" id="clueBox"></div>
+            <div class="passage" id="passageBox"></div>
+            
+            <div class="action-zone">
+                <div>
+                    <button id="submitBtn">Check Answers</button>
+                    <button id="resetBtn" class="secondary" style="margin-left: 0.5rem;">Clear</button>
+                </div>
+                <div class="result-panel" id="resultPanel"></div>
+            </div>
+
+            <div class="review-section" id="reviewSection">
+                <h3>Official Keys:</h3>
+                <div class="review-grid" id="reviewGrid"></div>
+            </div>
+        </div>
+        
+        <div class="footer-note">
+            Prepared by Luran Meahda Ramiz Rafin • Structured digitally for dynamic practice.
+        </div>
+    </main>
+
+    <script>
+        // Global variables storing question configurations and text structures
+        const database = {
+1: {
+    clues: ["capable", "syllabus", "enlightenment", "frustrate", "build", "requirement", "certainly", "both", "understand", "achieve", "concentrate", "be"],
+    keys: ["achieving", "syllabus", "understanding", "capability", "enlightenment", "Both", "requirement", "being", "frustrated", "concentrate"],
+    text: "Education aims at <gap a> two things: knowledge and skill. The lessons in a <gap b> gaining knowledge of certain subjects. When a learner gets a clear <gap c> of a subject or topic, it indicates his/her knowledge. Next appears skill that means the <gap d> of doing something with the use of knowledge. Knowledge provides us with <gap e> and skill presents the ability of doing well. <gap f> the two things are important. But here lies a more important <gap g>: education should make a good man. Without <gap h> a good man, no one should be considered fully and fairly educated. Without it all other achievements are <gap i>. Therefore, one should at first <gap j> on attaining positive human aspects."
+},
+2: {
+    clues: ["alleviation", "burden", "liability", "explosion", "asset", "resource", "predict", "poverty", "possible", "think", "planning", "crises"],
+    keys: ["explosion", "crises", "think", "burden", "poverty", "planning", "liability", "asset", "possible", "alleviation"],
+    text: "Population <gap a> is considered as one of the greatest <gap b> in our country. Many people <gap c> that overpopulation is a <gap d> and it causes <gap e>. But, in fact, proper <gap f> and management can turn this <gap g> into an asset. If we can develop our human <gap h> properly, it can be a <gap i> way for poverty <gap j>."
+},
+3: {
+    clues: ["prosper", "be", "so", "help", "idealism", "hence", "immortal", "positive", "country", "welfare", "materialism", "quality"],
+    keys: ["ideal", "positive", "country", "being", "welfare", "qualities", "helping", "material", "hence", "immortalizes"],
+    text: "Good citizens are <gap a> people who are possessing the <gap b> attitude about their society, community and <gap c> also. They never possess the quality of <gap d> deviated from the right path. They are always thinking about the <gap e> of their surroundings. They have all the good <gap f> that lead them to the path of <gap g> others. That is why good citizens are loved by all. They are not thinking of their <gap h> prosperity. And, <gap i> they dedicate their lives for others which <gap j> them."
+},
+4: {
+    clues: ["future", "aims", "lasting", "growing", "impacts", "happening", "implement", "corporate", "demand", "transit", "milestone", "project"],
+    keys: ["project", "milestone", "growing", "transit", "aims", "demands", "impacts", "implementation", "lasting", "future"],
+    text: "The Dhaka Metro Rail, a transformative urban transportation <gap a> represents a significant <gap b> in Bangladesh's efforts to address its <gap c> traffic congestion and transportation challenges. Planned as a mass rapid <gap d> system for the capital city of Dhaka, the metro rail <gap e> to provide a sustainable and efficient solution to the escalating <gap f> of urban mobility. Metro rail will have many positive <gap g> on our social and economic life as well. The successful <gap h> of this ambitious project is expected to have a <gap i> on Dhaka's urban landscape and contribute to a more sustainable and vibrant <gap j> for the capital."
+},
+5: {
+    clues: ["changes", "living", "mighty", "huge", "ambitious", "great", "economic", "connects", "reality", "owing", "dream", "developed"],
+    keys: ["reality", "great", "ambitious", "mighty", "owing", "connects", "changes", "living", "huge", "economic"],
+    text: "The Padma Bridge is no longer a dream now; it is now a <gap a>. This multipurpose bridge is going to be a <gap b> boon for the south-western part of Bangladesh. But decades ago, it was rather an <gap c> dream, a daunting challenge to tame the <gap d> Padma. Crossing the river has always been strenuous and sometimes dangerous <gap e> to unreliable and limited ferry-connections and long waits for crowded boats and launches. The Padma Bridge that <gap f> Dhaka with 21 southern districts is a potential catalyst for major economic <gap g> in the lives of over 30 million people <gap h> in the region and will give a <gap i> boost to trade and <gap j> activities."
+},
+6: {
+    clues: ["victorious", "independence", "champion", "surrender", "recapitulate", "oppression", "take", "historical", "birth", "division", "attack", "significant"],
+    keys: ["significant", "birth", "independent", "history", "division", "oppress", "attacked", "took", "surrender", "victory"],
+    text: "The most <gap a> event for Bangladesh is her <gap b> as an <gap c> nation on March 26, 1971. It is a red-letter day in the <gap d> of Bangladesh. After the <gap e> of subcontinent, we got Pakistan. But the Pakistanis began to <gap f> our people. At first, they <gap g> our language. We shall never forget the Language Movement of 1952. The Language Movement led to the Mass Upsurge of 1969. As a result, the War of Liberation <gap h> place in 1971. After nine, months struggle, the Pakistanis were compelled to <gap i> and we won <gap j>."
+},
+7: {
+    clues: ["all", "follow", "careful", "answer", "begin", "use", "through", "necessity", "rise", "distribute", "have", "carefully"],
+    keys: ["necessary", "follow", "through", "begins", "distribution", "have", "all", "carefully", "careful", "use"],
+    text: "Students should be strategic about their examination. It is <gap a> for an examinee to <gap b> some instructions. He should go <gap c> the whole question paper before he <gap d> to write. He must make a proper <gap e> of his time so that he can <gap f> enough time to answer <gap g> the questions. He must write his answer <gap h>. He should be <gap i> about his handwriting. He can <gap j> double spacing if his handwriting is tiny or very untidy."
+},
+8: {
+    clues: ["truthful", "need", "help", "easy", "keep", "select", "characteristics", "theory", "difficult", "cheat", "judge", "suggestions"],
+    keys: ["judging", "character", "easy", "difficult", "need", "helpful", "keeps", "cheated", "selecting", "suggestions"],
+    text: "It is not easy to understand a man by seeing only his face. Even it is not easy to know about his mentality by <gap a> only his speeches. It is very difficult to examine a man's <gap b> by his outer appearances. So, finding a friend is not very <gap c>. It is one of the world's most <gap d> tasks. Real friends are found in our <gap e>. A real friend is always <gap f> in his friend's dangers. He always <gap g> his friend's secrets secure. We can often be <gap h> by friends. We must remain careful in <gap i> friends. We can have <gap j> from our elders in this regard."
+},
+9: {
+    clues: ["suffer", "fertilizers", "appear", "rural", "severely", "environment", "substances", "cause", "alarm", "different", "diseases", "afflicted"],
+    keys: ["alarming", "appears", "rural", "afflicted", "fertilizers", "suffer", "severely", "differs", "substances", "causing"],
+    text: "Many diseases are rising at an <gap a> rate which experts believe is due to increased pollution of the environment. Some specialists believe that pollution <gap b> to be greater in urban areas. Though <gap c> societies too are <gap d> by increased use of chemical <gap e> and insecticides. Nevertheless, today city people appear to suffer from many more diseases and <gap f> more <gap g> than country people. Now, let us see how life in cities <gap h> from that in the country. Harmful <gap i> in water and air are <gap j> environment pollution."
+},
+10: {
+    clues: ["from", "questions", "hand", "even", "good", "no", "ask", "change", "is", "part", "towards", "depend"],
+    keys: ["part", "changing", "towards", "even", "ask", "from", "no", "questions", "hand", "good"],
+    text: "Hospitality has long been a <gap a> of our culture in Bangladesh. Although many other things are <gap b> now, people are still quite polite and friendly <gap c> foreigners. They like speaking to foreigners <gap d> if they have not been introduced. It is quite common for Bangladesh is to <gap e> personal questions about family, jobs and income which visitors <gap f> overseas might find awkward. However, it should be understood that <gap g> harm is meant by such <gap h>. On the other <gap i> they express a genuine interest in the foreigner's state of affairs. The whole country has a fairly <gap j> communication network now."
+},
+11: {
+    clues: ["device", "abacus", "trained", "large", "about", "perform", "recent", "great", "essential", "special", "refer", "call"],
+    keys: ["recent", "essential", "about", "device", "called", "abacus", "refers", "large", "great", "trained"],
+    text: "The computer is a fairly <gap a> invention. It has now become an <gap b> part of modern life. It has greatly benefited us and brought <gap c> revolutionary changes in our life. Any <gap d> that helps people perform mathematical calculation may be <gap e> a computer. In this sense the <gap f> is a simple computer. Today, however, the term, computer <gap g> to a special kind of electronic machine that can perform mathematical calculations and process <gap h> masses of information at a <gap i> speed. In a few minutes, a computer can perform calculation that <gap j> mathematicians would need years to complete."
+},
+12: {
+    clues: ["and", "cases", "virus", "diagnosed", "sore", "severe", "outbreak", "an", "exposure", "normal", "as", "patient"],
+    keys: ["diagnosed", "outbreak", "a", "and", "patient", "virus", "severe", "exposure", "sore", "cases"],
+    text: "Coronavirus or COVID-19 causes respiratory infections. It was first <gap a> in December 2019 in Wuhan City in China. The <gap b> quickly spread around the world and it turned into <gap c> pandemic as it has taken away millions of lives <gap d> infected crores of people. In Bangladesh, the first COVID-19 <gap e> was identified on March 08, 2020 in Dhaka. The <gap f> causes illnesses ranging from the common cold to more <gap g> diseases. The symptoms are shown within 14 days of <gap h> to the virus. Common signs of infection include fever, <gap i> throat, body ache, coughing and breathing difficulties. In severe <gap j> it can cause pneumonia, multiple organ failure and death."
+},
+13: {
+    clues: ["result", "avert", "dump", "microphone", "creature", "toxic", "odour", "avoid", "dispose", "fume", "waterborne", "determine"],
+    keys: ["avoidable", "fume", "disposal", "dumping", "water-borne", "microphones", "odour", "creature", "determined", "avert"],
+    text: "Every year millions of people all over the world die unnecessarily as a result of pollution. These unfortunate and <gap a> deaths are brought about by four specific factors. Firstly, air pollution from factories, burning trash, and vehicle <gap b> cause pneumonia, bronchitis and other respiratory diseases. Then, water pollution from industrial discharge, the indiscriminate <gap c> of toxic chemicals, and the <gap d> of human waste into rivers and canals causes poisoning and <gap e> diseases such as cholera and diarrhoea. The next factor is the noise pollution from vehicle horns and <gap f> that might cause aggression and damage hearing. And finally, <gap g> pollution from dumped or untreated human waste causes serious discomfort to our sense of smell, and attracts disease-bearing <gap h> such as rats and flies. We should take <gap i> action to control these problems and clean up the environment to <gap j> these unnecessary diseases."
+},
+14: {
+    clues: ["possible", "waste", "religion", "allow", "positive", "circular", "discourage", "safe", "tie", "recruit", "yet", "though"],
+    keys: ["positive", "recruiting", "yet", "religious", "discourage", "allowed", "safety", "tied", "possibility", "wastage"],
+    text: "To encourage female education, the government has taken some <gap a> steps such as giving stipends to girl students, <gap b> more female teachers, etc. <gap c> girls cannot receive the full benefit of education mainly because of the following reasons: <gap d> misinterpretation and social strictures <gap e> girls from going to schools. Even in urban schools girls are not <gap f> by many parents to live in hostels or their daughters' <gap g>. Early marriage and childbirth make women <gap h> to home with no <gap i> of going back to school. Any expenditure for sending girls to school is considered a <gap j> whereas it is regarded as an investment in case of boys."
+},
+15: {
+    clues: ["eloquent", "choice", "darkness", "awareness", "intellectual", "purpose", "learn", "human", "attain", "sensibility", "parochialism", "enlighten"],
+    keys: ["learning", "intellectual", "attain", "enlighten", "choices", "sensibility", "parochialism", "aware", "eloquence", "darkness"],
+    text: "Education is the process by which our mind develops through formal <gap a> at an institution. It is mental and <gap b> training. It provides opportunities of growth and helps to <gap c> challenges. Moreover, the purpose of education is to <gap d> an individual. The aim of education is also to train individuals to make right <gap e>. It ennobles our mind and refines our <gap f>. It broadens our outlook and removes <gap g>. It helps us to be <gap h> of our rights and responsibilities. Education furnishes us with an <gap i> in expressing truth. Therefore, it is compared to light which dispels the <gap j> of ignorance."
+},
+16: {
+    clues: ["read", "although", "used", "touch", "tips", "develop", "dots", "way", "see", "bear", "print", "called"],
+    keys: ["although", "see", "touching", "developed", "called", "way", "bears", "dots", "tips", "printed"],
+    text: "<gap a> blind people cannot <gap b> their sense of <gap c> becomes far more <gap d> than that of most sighted people. This ability was put to use by a brilliant man <gap e> Louis Braille. In the early 19th century, he invented a <gap f> of writing which <gap g> his name. The Braille system reproduces the letters of the alphabet by a series of <gap h> in certain positions, which are raised on the paper. The blind person runs the <gap i> of his fingers across the pages of the Braille book and can work out the letters and numbers <gap j>."
+},
+17: {
+    clues: ["ecosystem", "alter", "change", "ecology", "example", "word", "rise", "link", "interrelated", "know", "fixed", "sake", "balance", "responsible"],
+    keys: ["interrelated", "known", "ecosystem", "links", "hang", "balance", "altering", "example", "ecological", "responsibility"],
+    text: "All things that make up the environment are <gap a> to each other and to their surroundings there. The way in which people, animals and plants are related to each other and to their surroundings is <gap b> as ecology. The <gap c> is a complex web that <gap d> animals, plants and every other life form in the biosphere. All these things <gap e> together. The system is in a steady state of dynamic <gap f> which means that by <gap g> any one part of the web you can affect all the other parts. For <gap h> the destruction of forests may have serious <gap i> consequences. It is the <gap j> of human beings to prevent the environment from being spoilt."
+},
+18: {
+    clues: ["warning", "recklessly", "cut", "severe", "increase", "extinction", "provide", "alarming", "rise", "imperative", "anticipation", "particularly", "habitats", "catastrophe"],
+    keys: ["habitats", "extinction", "cut", "recklessly", "increase", "rising", "warming", "anticipated", "catastrophe", "imperative"],
+    text: "The destruction of forests and other <gap a> is causing the <gap b> of various plants and animals everyday. In the last 25 years alone the world has lost one third of its natural wealth. Forests are being <gap c> down. Moreover, they are being burnt <gap d> resulting in an <gap e> in carbon dioxide and ultimately the water level is <gap f> as a consequence of global <gap g>. It is <gap h> that the new century will face an overwhelming environment <gap i>. It is therefore <gap j> to check the reckless pollution of the environment."
+},
+19: {
+    clues: ["spiritual", "develop", "proper", "do", "learn", "well-mannered", "educate", "make", "but", "he", "and", "of"],
+    keys: ["developing", "but", "makes", "He", "and", "of", "properly", "well-mannered", "education", "spiritually"],
+    text: "A student or learner can improve all his latent talents through the channel of proper education. Proper education aims at <gap a> him not only physically <gap b> also mentally. Such education <gap c> him an ideal man. <gap d> can lead both himself <gap e> society to the way <gap f> happiness and prosperity. A <gap g> educated man is sympathetic, <gap h> and kind. Indeed proper <gap i> makes him mentally and <gap j> developed."
+},
+20: {
+    clues: ["misuse", "popular", "family", "spreads", "Blushing", "invented", "makes", "expand", "users", "over", "addicted", "within"],
+    keys: ["popular", "expanding", "over", "invented", "within", "spreads", "misused", "using", "addicted", "family"],
+    text: "Facebook is an online networking. It is a <gap a> social networking service. It is <gap b> friendship and relation <gap c> the world. Mark Zuckerberg first <gap d> facebook. <gap e> all a very short time it gained much popularity. Now, it has over one billion active users. It <gap f> love and shares sorrows. But sometimes it is <gap g> which is very alarming for the future generation. Adults are also getting <gap h> to it which is causing many problems in their <gap i> life. So we should be aware of using facebook. <gap j>"
+},
+21: {
+    clues: ["solve", "opposite", "problems", "effective", "building", "huge", "situated", "call", "expensive", "surrounding", "parliament", "wonderful"],
+    keys: ["parliament", "opposition", "called", "situated", "wonder", "expensive", "surrounding", "solving", "effectively", "huge"],
+    text: "A parliament is the house where the legislators make and change laws for the nation. In the <gap a> the party in power and the <gap b> debate to make new laws or change or nullify the old ones. The Parliament House in Bangladesh is <gap c> the Jatiya Sangsad. It is <gap d> at Sher-e-Bangla Nagar in Dhaka. Our Parliament House is a <gap e> of modern architecture and technology. It is a very <gap f> house. The <gap g> area of the House covers a large area. So, this place should be the centre of <gap h> major problems of the country. If all the members of the Parliament act <gap i> for the welfare of the country, the main purpose of this House will be fulfilled and the <gap j> cost of the public money will be utilized properly."
+},
+22: {
+    clues: ["disaster", "desire", "attain", "success", "perhaps", "bear", "overcome", "inspire", "why", "courage", "rare", "hope"],
+    keys: ["attain", "why", "perhaps", "overcome", "courageous", "desired", "hopeless", "inspires", "successful", "disaster"],
+    text: "We desire success in life. But few of us can <gap a> it. One of the important reasons <gap b> many of us fail to succeed is <gap c> we do not take the risk. Life is full of troubles and difficulties. We have to <gap d> these difficulties if we want success in life. We must be <gap e> enough to fight against the misfortune of life. It may happen that our first effort may bring no <gap f> result, but we should not be <gap g> in mind that failures in life <gap h> man to struggle hard. A man without courage to take risk can never be <gap i> in life. But risk should be taken carefully. Otherwise, it will bring about <gap j> in life."
+},
+23: {
+    clues: ["succeed", "past", "sure", "rainfall", "sunshine", "they", "cloud", "future", "one", "measure", "show", "idle"],
+    keys: ["cloudy", "rainfall", "sunshine", "future", "shows", "sure", "one", "idleness", "success", "measured"],
+    text: "It is said that morning shows the day. For example, a dull <gap a> day indicates a dull day of <gap b> while a bright day indicates <gap c>. Similarly, childhood also reflects the <gap d> of a man. If one <gap e> signs of intelligence and diligence, one is <gap f> to achieve success but if <gap g> shows signs of foolishness and <gap h> one may not see <gap i> in this world. Besides, many things are <gap j> on the basis of a child's preliminary performance. So, every child should be provided with equal opportunities."
+},
+24: {
+    clues: ["recur", "safe", "minimize", "lie", "opine", "compulsory", "aware", "straight", "develop", "loss", "precaution", "possibility"],
+    keys: ["lies", "aware", "recurrence", "straight", "safety", "possibility", "precautionary", "minimize", "opines", "developed"],
+    text: "It's a matter of great concern that Bangladesh <gap a> in the active earthquake zone. Most of the Bangladeshis are fully <gap b> of its severity. Experts are alarmed by the <gap c> of quakes during recent years. But they give no <gap d> answer to the question of <gap e> about the buildings of Dhaka City. Since there is every <gap f> of earthquakes in Bangladesh, experts call for taking adequate <gap g> measures to <gap h> losses. Rajuk <gap i> that an earthquake resistant building code should be <gap j>."
+},
+25: {
+    clues: ["cheat", "tell", "story", "completely", "think", "rescue", "make", "face", "care", "matter", "promise", "treat"],
+    keys: ["matter", "careful", "facing", "make", "rescued", "thinking", "completely", "story", "tells", "cheated"],
+    text: "Keeping promise given to anyone is a must though it takes much perseverance to keep promise honestly. Since keeping promise is a <gap a> of remembrance, we should be <gap b> whenever we make promises. While <gap c> an unavoidable danger, people usually <gap d> any promise only to be <gap e> from the situation without perfect <gap f>. After being rescued most people <gap g> forget the promises given. A <gap h> about the pied piper of Germany <gap i> how the piper was deliberately <gap j> by the mayor, who has made promises to give piper one thousand guilders for his work."
+},
+26: {
+    clues: ["all", "follow", "through", "necessary", "answer", "budget", "have", "use", "rise", "careful", "begins", "carefully"],
+    keys: ["necessary", "follow", "through", "begins", "budget", "have", "all", "carefully", "careful", "use"],
+    text: "Students should be strategic about their examination. It is <gap a> for an examinee to <gap b> some instructions. He should go <gap c> the whole question before he <gap d> to write. He must make a <gap e> of his time so that he can <gap f> enough time to answer <gap g> all questions. He must write his answer <gap h> very large. He should be <gap i> about his handwriting. He can <gap j> double spacing if his handwriting is tiny or."
+},
+27: {
+    clues: ["but", "competitive", "best", "informative", "economy", "unless", "effective", "get", "depend", "make", "merit", "low", "available", "goods"],
+    keys: ["effective", "making", "goods", "economy", "competitive", "unless", "merit", "availability", "low", "informative"],
+    text: "In the present world, advertisement is the most <gap a> and recognised mean of <b > people know about the products and <gap c> of a company. With the introduction of open market <gap d> production system has become very <gap e>. But only producing quality goods is not the last things to do. <gap f> people know about the products, goods will not be sold on its own <gap g>. Advertisement will serve that purpose of informing people of the quality, price and <gap h> of goods or products concerned. Even effective advertisement will motivate people to buy goods of even <gap i> quality. So advertisement has got both persuasive and <gap j> quality."
+},
+28: {
+    clues: ["civilization", "development", "ignorant", "programme", "quack", "awareness", "school", "hard", "teach", "modern", "work", "people", "more", "home"],
+    keys: ["civilization", "ignorant", "development", "modern", "quack", "programme", "more", "school", "awareness", "teach"],
+    text: "It is a great tragedy that after many years of independence, illiteracy still remains one of the greatest problems in Bangladesh. It is one of the serious threats to progress and <gap a> that our country has to face. Illiteracy keeps people <gap b> and superstitious. It is a strong obstacle in the way of <gap c>. There are still many people who do not believe in <gap d> medicine. They prefer to go to the village <gap e> who gives them charms and promises to work miracles. They refuse to take part in any family planning <gap f>. They think that the more children they have the <gap g> bread earners there will be. They are not educated themselves nor do they want to send their children to <gap h>. We must try to grow <gap i> among our countrymen about the need of education. We who are fortunate enough to attend school should <gap j> those who do not have this family."
+},
+29: {
+    clues: ["fundamentally", "atmosphere", "endanger", "give", "deplete", "inundate", "primary", "accumulated", "grow", "eventual", "coal"],
+    keys: ["atmosphere", "primarily", "given", "accumulating", "eventually", "inundate", "fundamental", "grow", "depleted", "endangered"],
+    text: "Scientists have recently reported that the polar ice caps are melting. This is due to a rise in <gap a> temperatures known as the 'Greenhouse Effect'. Carbondioxide is <gap b> responsible for temperature rise in atmosphere. The carbondioxide is <gap c> off when coal and oil are burnt. This gas is <gap d> in the air and the ice caps in the North and South poles are melting. This may <gap e> lead to a rise in the sea levels which could <gap f> many areas of the globe. The 'Greenhouse Effect' is just one of the many <gap g> changes which are taking place in the environment. Tropical rain forests, which took fifty million years to <gap h> are being <gap i> at the rate of fourteen acres per minute. The total area of the world's deserts is increasing every year. Many species of animals and plants are <gap j> with the threat of extinction."
+},
+30: {
+    clues: ["mankind", "be", "endanger", "save", "concern", "means", "protection", "destroy", "species", "perish", "spoil", "change"],
+    keys: ["changed", "protect", "spoilt", "endangered", "concern", "perish", "destroying", "saved", "means", "mankind"],
+    text: "All species are important for maintaining ecological balance. If one is lost, the whole natural environment gets <gap a>. We should <gap b> our wildlife to protect the environment from being <gap c>. Many countries are now taking action to protect their <gap d> wildlife. Mankind must develop a <gap e> for wild creatures and must ensure that they will not <gap f>. Love for animals <gap g> them. Love for <gap h> wild creatures means destroying ourselves. It is high time we <gap i> them. <gap j> means protecting the balance of nature."
+},
+31: {
+    clues: ["acquisition", "spontaneous", "mother", "develop", "use", "the", "usual", "aware", "natural", "competent", "communication", "fact", "learning", "ability", "acquire"],
+    keys: ["ability", "developing", "acquisition", "mother", "fact", "using", "communication", "natural", "aware", "spontaneously"],
+    text: "Communicative competence refers to the <gap a> to use language appropriately in various circumstances. There are two ways of <gap b> communicative competence in a language. The first is <gap c>. It is a <gap d> process in which users are not <gap e> that they are <gap f> the language for <gap g>. In non-technical terms, acquisition is 'picking up' a language similar to the way people develop ability in their <gap h> tongue. They are aware only of the <gap i> that they are using the language to communicate. In contrast, language learning is a conscious process in which learners learn language rules <gap j>."
+},
+32: {
+    clues: ["power", "violence", "handicap", "sound", "slow", "voice", "control", "through", "confine", "peace", "think", "limited", "gradually", "play"],
+    keys: ["control", "gradually", "confined", "power", "limited", "through", "voice", "sound", "handicapped", "slow"],
+    text: "Stephen gradually started losing <gap a> over the muscles of his body as he <gap b> became a victim of Gehrig's disease. Since the age of thirty, he has been <gap c> to a wheelchair with no <gap d> to control his body except for some <gap e> movement of his head and hands only! He can speak only <gap f> a computer with a <gap g> synthesizer that converts his message into <gap h>. But such a tremendous physical <gap i> has not managed to dishearten or <gap j> him down."
+},
+33: {
+    clues: ["earn", "merely", "chain", "from", "world", "raise", "and", "dominated", "surplus", "rightful", "descend", "free", "arise", "fall"],
+    keys: ["descend", "raise", "earned", "domination", "merely", "freedom", "from", "rightful", "world", "and"],
+    text: "Liberty does not <gap a> upon a people; a people must <gap b> themselves to it. It is a fruit that must be <gap c> before it can be enjoyed. That freedom means freedom only from foreign <gap d> is an outworn idea. It is not <gap e> the government that should be free, but people themselves should be free. And no <gap f> has any real value for the common men or women unless it also means freedom from want, freedom from disease and freedom <gap g> ignorance. This is the main task which confronts us if we are to take our <gap h> place in the modern <gap i>. So, we must go forward at a double pace bending all our resources <gap j> energies to this great purpose."
+},
+34: {
+    clues: ["four", "communicative", "tradition", "require", "communication", "item", "variety", "skill", "speaks", "imply", "base", "international", "foreign", "purpose"],
+    keys: ["international", "speak", "purpose", "communicate", "variety", "based", "four", "require", "items", "communicative"],
+    text: "English is called an <gap a> language. In almost all countries, there are people who can <gap b> English. No other language than English serves the <gap c> of a common language through which people can <gap d> with one another across the national border. We should learn English for a great <gap e> of purposes. English is a <gap f> subject. We should therefore learn the <gap g> skills of listening, speaking, reading and writing. The communicative approach to learning English does not <gap h> one to know or learn definitions of grammar <gap i>. Traditional grammar has little or no place in learning English through the <gap j> approach."
+},
+35: {
+    clues: ["language", "spelling", "alphabetic", "find", "syllable", "neglect", "noun", "life", "synonyms", "picture", "friends", "antonyms"],
+    keys: ["life", "alphabetically", "find", "spelling", "syllable", "antonyms", "noun", "picture", "friend", "neglect"],
+    text: "Dictionaries are very important books in the <gap a> of a people. A dictionary lists the words in a language <gap b> so that the reader may <gap c> them easily. A dictionary entry gives us the accepted <gap d> of a word, its division into <gap e>, its pronunciation, its origins, and its meaning. Sometimes a dictionary also provides <gap f> or opposites of a word. In addition, if the word is a <gap g> that describes a visible thing, the dictionary may provide a <gap h> of it. Dictionaries of the past, present and future can become your teachers and good <gap i>. Don't <gap j> them."
+},
+36: {
+    clues: ["wake", "obtain", "expression", "go", "till", "be", "moment", "integral", "perceive", "what", "by", "use"],
+    keys: ["is", "moment", "till", "waking", "express", "what", "obtain", "integral", "perceive", "using"],
+    text: "Language <gap a> an important medium of expression of thoughts, feeling, ideas etc. We use it from the <gap b> we wake up in the morning <gap c> we go to bed at night. We use language not only during our <gap d> hours but also in our dreams. We use language to <gap e> what we feel and to say <gap f> we like or dislike. We also use it to <gap g> information. In short, languages is an <gap h> part of what we do, <gap i> and believe. We must avoid <gap j> bad language."
+},
+37: {
+    clues: ["attitude", "amply", "predetermined", "ordered", "ordained", "sorrows", "outlook", "belief", "undergo", "hold", "fate", "poor"],
+    keys: ["outlook", "believe", "predetermined", "ordained", "fate", "sorrows", "hold", "undergo", "amply", "attitude"],
+    text: "There are many people in our country who have a conservative <gap a>. Quite early in life they learn to <gap b> that everything in this world was <gap c>. They think all that happens to them was <gap d> by God. From this belief the poor generally accept their <gap e>. They also accept all their <gap f> and sufferings without trying much to overcome them. They also <gap g> a firm belief that those who <gap h> sufferings in this world will be rewarded in the next world. They also have the same sort of <gap i> towards illness and disease. <gap j>"
+},
+38: {
+    clues: ["for", "among", "potential", "create", "resources", "likely", "achievement", "success", "have", "returns", "fail", "from", "development", "investment", "wealth"],
+    keys: ["for", "returns", "creating", "potential", "had", "likely", "success", "from", "failing", "resources"],
+    text: "Investment in education of <gap a> girls increases the economic and social <gap b> through its impact on all other sectors. Educating girls contributes to <gap c> wealth development. Educated women have a higher income <gap d> than those who have <gap e> no schooling. Educated mothers are more <gap f> to send both their boys and girls to school. It is important to realise that <gap g> in girl's education generally results <gap h> an integrated approach to community development. Thus <gap i> to educate girls results in a tremendous waste of potential human <gap j>."
+},
+39: {
+    clues: ["embrace", "introduce", "noticing", "suddenly", "control", "introduction", "remain", "makes", "interpret", "usual", "friend", "reputation", "noticeable", "keep"],
+    keys: ["reputation", "keeping", "noticeable", "usually", "embrace", "introduction", "remain", "interpreted", "makes", "friendly"],
+    text: "The British have <gap a> for <gap b> their emotions private. Some obvious things are <gap c> in British behaviour. For example, on public transport one passenger does not <gap d> talk to another passenger. On meeting people do not <gap e> and often simply shake hands on a first <gap f>. In theatres, concert halls and cinemas audiences <gap g> quiet during performances. None of these behaviour traits should be <gap h> as unfriendliness. If a visitor <gap i> the first move to start a conversation, he will find a British citizen rather <gap j>."
+},
+40: {
+    clues: ["prediction", "global", "pollute", "bring", "avoid", "extinction", "temperatures", "undergo", "suitable", "action", "rise", "waste", "cruelly", "unnecessary"],
+    keys: ["wastes", "undergoing", "global", "predict", "suitable", "unnecessarily", "pollution", "avoidable", "brought", "action"],
+    text: "The disposal of various kinds of <gap a> is seriously polluting the environment. The world's climate is <gap b> a significant change. <gap c> warming is the cause of the increase of heat in the atmosphere. The climatologists <gap d> that it will be difficult to find a <gap e> place to live in. Every year millions of people all over the world die <gap f> as a result of <gap g>. These unfortunate and <gap h> deaths are <gap i> about by four specific factors. We should take determined <gap j> to control these problems."
+},
+41: {
+    clues: ["think", "seem", "distress", "develop", "familiar", "make", "communicate", "ensure", "treat", "get", "mutual", "neighbour"],
+    keys: ["developing", "getting", "communicate", "seems", "mutual", "make", "treat", "ensure", "distress", "neighbours"],
+    text: "As the world's communication system is <gap a> day by day, the world seems to be <gap b> smaller. For the development of communication system, now we can easily <gap c> with the people of other countries within a moment. Now, the world <gap d> to be a village and the countries seem to be families. If we develop our <gap e> understanding and co-operation, we can <gap f> our world a better place. We should never <gap g> others as enemies but as friends. As a friend we should <gap h> immediate help to other countries in their <gap i> and sorrows. We should take them to be our <gap j>."
+},
+42: {
+    clues: ["happy", "dominated", "consider", "husband", "protect", "save", "education", "subservient", "healthy", "law", "beat up", "issue", "unnecessary"],
+    keys: ["subservient", "dominated", "husbands", "considered", "issues", "beaten up", "protect", "law", "save", "education"],
+    text: "Women in our society have always been considered <gap a> to men. The majority of houses are being <gap b> usually by <gap c> and women most often have no say in opinion. Their opinion is <gap d> unnecessary even in such important <gap e> as the number of things they would like to have. In many households they are <gap f> by the husbands. To <gap g> their rights the Govt. has introduced law. But <gap h> sometimes can't <gap i> them. So what is more needed for them is the proper <gap j>."
+},
+43: {
+    clues: ["self-reliance", "has", "work", "professionals", "enter", "opt", "identification", "education", "count", "necessary", "acknowledge", "present"],
+    keys: ["presence", "acknowledged", "worked", "counted", "have", "necessity", "identity", "entering", "professions", "opting"],
+    text: "One very conspicuous change in our society is the <gap a> of working women outside the home. Of course, it has to be <gap b> that women have always <gap c> within the household but this commonly is not <gap d> as 'work'. It is unfortunate that women's roles in agricultural societies <gap e> not been recognised either. Whether it is due to economic <gap f> or the urge to establish in individual <gap g> or both. Nowadays many women are <gap h> the outside workforce. They are joining a wide range of <gap i>. Moreover, it is not only educated women who are <gap j> to work but women with little or no education have come out of their cocoons to earn and become self-reliant."
+},
+44: {
+    clues: ["accelerate", "come", "disaster", "isolation", "globe", "add", "former", "revolution", "gain", "successful", "exist", "noble", "explore", "communication", "tremendous", "advancement"],
+    keys: ["gained", "successfully", "explore", "revolutionary", "communicate", "global", "isolated", "comes", "disaster", "accelerated"],
+    text: "We have got many positive things during the last century. We have <gap a> tremendous advancement in the field of science. For example, man has <gap b> landed on the moon. He is going to <gap c> other planets. We have achieved <gap d> success in the field of Information Technology. Now we can <gap e> with any part of the world in a second. The world has become a <gap f> village. No nation is <gap g> from other countries. One country <gap h> to help other country during the time of <gap i>. Science has certainly <gap j> the process of globalization."
+},
+45: {
+    clues: ["common", "child", "labour", "notice", "feel", "working", "sad", "rights", "for", "healthy", "deprive", "educate", "feeling", "also", "proper"],
+    keys: ["common", "noticed", "feel", "working", "saddens", "deprived", "rights", "proper", "healthy", "education"],
+    text: "Child labour has become a <gap a> sight in Bangladesh. I have <gap b> many young children working for a living around us. I <gap c> for them and the sight of these <gap d> children's pains. The thought of my failure to do anything for them <gap e> me. I think these young working children are being <gap f> of their fundamental <gap g>. They do not get <gap h> food and clothes. They do not live in a <gap i> environment. They don't possess good health and they are being deprived of <gap j>."
+},
+46: {
+    clues: ["suit", "development", "discrimination", "avail", "assign", "little", "permit", "works", "rise", "birth", "exist", "obligatory", "supplementary", "purpose"],
+    keys: ["born", "supplement", "existing", "suited", "assigned", "discriminatory", "available", "less", "raise", "permission"],
+    text: "Gender discrimination in Bangladesh begins when a girl is <gap a>. Most parents want to have children so that they can, when they are older <gap b> their family income and/or help with the domestic work. In the socio-economic set-up, male children are best <gap c> to this purpose. So, girls are born to an unwelcome word. However, they are <gap e> rather confined to domestic chores. Some of these girls may be at school. But all their work - domestic or academic-stops as soon as they are married off, which is the prime concern of the parents about their daughters. This <gap f> treatment has some long-term negative effects on the body and mind of the girls children and women in a family. They are given to understand that they should keep the best food <gap g> for the male members in the family; that they should eat <gap h> then the male members; that they should not <gap i> their voice when they speak; that they should not go out of their house without <gap j>."
+},
+47: {
+    clues: ["inferior", "sacrifice", "blue", "long", "dignity", "same", "work", "ready", "high", "help", "above", "through"],
+    keys: ["dignity", "work", "blue", "ready", "inferior", "above", "same", "sacrifice", "long", "through"],
+    text: "Man's <gap a> depends upon his work. He is a rational being on earth. He is to <gap b> for others. He should not be proud if he is of <gap c> blood. He should be <gap d> to help any class of man. The men whom he is helping may be <gap e> to him in birth. But <gap f> all he is a man. He has the <gap g> blood and flesh as the superior kind of man. So, he should <gap h> his own life for other's welfare. We cannot live <gap i> on the earth. We must die once. But we can live <gap j> our works."
+},
+48: {
+    clues: ["determine", "accuracy", "success", "beside", "failure", "avoid", "last", "pay", "groom", "besides", "demonstrate", "ostentation"],
+    keys: ["successful", "should demonstrate", "last", "is determined", "groomed", "avoiding", "Besides", "pay", "ostentatious", "accurate"],
+    text: "To be <gap a> in a job interview, the applicant certan personal and professional qualities. In as much as the first and often <gap c> impression of a person <gap d> by the clothes he wears, the job applicant should take care to appear well <gap e> and modestly dressed, <gap f> the extremes of too elaborate or too casual an attire <gap g> care for personal appearance, he should <gap h> close attention to his manner of speaking, which should be neither <gap i> nor familiar, but rather straightforward, grammatically <gap j> and friendly."
+},
+49: {
+    clues: ["loss", "occur", "areas", "warm", "say", "tell", "mountains", "round", "around", "huge", "be", "level"],
+    keys: ["have occurred", "warming", "around", "huge", "mountains", "level", "are", "say", "area", "loss"],
+    text: "Natural disasters <gap a> throughout the world in recent years. The main reason behind this is greenhouse effect or <gap b> of the air <gap c> the earth. Global warming is melting the <gap d> ice of the Polar regions and of the peacks of high <gap e>. Consequently the <gap f> sea water has alarmingly increased. Cyclones and tidal bores <gap g> inundating and destroying the coastal regions to a large extent. Climatologists <gap h> that in the last 185 years 99 cyclones hit the coastal <gap i> and off-shores islands of our country causing heavy <gap j> of life and properties."
+},
+50: {
+    clues: ["popular", "prosperous", "illiterate", "extent", "job", "facilities", "enter", "century", "expect", "explosion", "condition", "eradicate", "decade", "be"],
+    keys: ["entered", "expect", "populous", "explosion", "extent", "century", "illiteracy", "illiterate", "eradicate", "prosperous"],
+    text: "The 20th century has come to an end. Now we have <gap a> the 21st century. What kind of life do we <gap b> in this century? Bangladesh is a small <gap c> country. Our population <gap d> has been checked to some <gap e>. We hope it will be fully checked in the present <gap f>. Our another problem is <gap g>. Most of our people are <gap h> and they can not read and write. Some effective steps have been taken to <gap i> illiteracy. We hope that in the 21st century, everybody will enjoy a healthy, happy and <gap j> life."
+},
+51: {
+    clues: ["make", "emerge", "radiate", "contribute", "regard", "serve", "invent", "identify", "send", "outside", "mystery", "country"],
+    keys: ["inventions", "contributed", "emergence", "sent", "mystery", "serves", "regarding", "identify", "movement", "make"],
+    text: "Satellite is one of the greatest <gap a> of modern science. It has <gap b> greatly to the <gap c> of modern civilization. A satellite is a man-made device which is <gap d> to the outer space. It moves around the earth and explores the <gap e> of space outside the earth. There are different types of satellites and each of them <gap f> a special purpose. A satellite sends us important information <gap g> weather conditions. It helps an aeroplane to <gap h> its path. An astronomical satellite monitors <gap i> of stars in the outer space. And a telecommunication satellite helps us to <gap j> an international phone call."
+},
+52: {
+    clues: ["take", "know", "decorate", "special", "fold", "geometry", "size", "shape", "move", "natural", "costly", "top", "decorative"],
+    keys: ["folding", "shapes", "known", "practiced", "taken", "specially", "decorating", "decorative", "geometrical", "movement"],
+    text: "The craft of <gap a> paper to give them different <gap b> without any cutting or pasting is called Oregami. Although not much is <gap c> about its origin, Oregami has been <gap d> in the Orient for centuries. In fact it has <gap e> the form of sophisticated art in Japan where it is <gap f> prized for <gap g> figures, and for ceremonies. As a form of <gap h> plaything. Oregami takes the forms of birds, fish, insects, animals and <gap i> sometimes with flexible parts to imitate the <gap j> of real life objects."
+},
+53: {
+    clues: ["eat", "kind", "food", "which", "increase", "use", "other", "protein", "source", "grow", "call", "come"],
+    keys: ["source", "comes", "which", "called", "kinds", "eat", "other", "increase", "grown", "use"],
+    text: "The Ocean has always been a good <gap a> of food for man. But only one percent of mankind's food <gap b> from the sea and most of it is fish. Besides fish, we eat prawns, shrimps, lobsters and whales <gap c> are commonly <gap d> fish but are scientifically classified otherwise. There are about 20 thousand <gap e> of fish in the sea. We <gap f> only a few kinds. We should try to eat some <gap g> kinds too. In order to <gap h> the sea's yield of fish, we can start fish farming in the sea. In China, sea weeds are now <gap i> both as food and as fertilizer. We too can take similar measures and make the best <gap j> of our water resources."
+},
+54: {
+    clues: ["waste", "rubbish", "incinerators", "environment", "refabricated", "manage", "extent", "of", "some", "non-burnable"],
+    keys: ["waste", "manage", "extent", "environment", "of", "some", "non-burnable", "incinerators", "refabricated", "rubbish"],
+    text: "We can not altogether get rid of our <gap a> but a proper management of it can certainly reduce its quantity. If we think of burning, burying, recycling and thus <gap b> our waste, we can to a large <gap c> save our <gap d>. Our garbage consists <gap e> various kinds of things. Some are burnable, <gap f> are <gap g>. In some countries waste is destroyed by <gap h> at tall. The non-burnable waste is melted and <gap i>. Some <gap j> is not destroyed."
+},
+55: {
+    clues: ["learn", "quickly", "over", "commit", "explain", "reading", "filled", "enriched", "aloud", "times", "know", "possession", "thoughts", "of"],
+    keys: ["learning", "over", "possession", "enriched", "thoughts", "times", "of", "commit", "aloud", "known/learnt"],
+    text: "Young people often consider <gap a> poetry by heart a tiresome drudgery. But the learning of poetry has great advantage <gap b> merely reading it. Poems that have been learnt become a permanent personal, <gap c>. The mind is <gap d> with a store of beautiful or lofty <gap e> and ideas which may be a source of pleasure, comfort and inspiration at <gap f> when the books are not at hand. Poems selected for learning, however, should be worthy <gap g> the time to be spent on them and should be those which make a strong appeal to the learner. The best way to <gap h> a poem to memory is not to learn it line by line, but to read the whole poem <gap i> over and over again until it is thoroughly <gap j>."
+},
+56: {
+    clues: ["poverty", "know", "always", "glad", "belief", "than", "useful", "obtained", "genuine", "stage", "great", "from", "servants", "plenty"],
+    keys: ["great", "belief", "useful", "genuine", "from", "than", "always", "servants", "glad", "know"],
+    text: "People moan about poverty as a <gap a> evil, and it seems to be an accepted <gap b> that if people had plenty of money they would be happy and <gap c> and get more out of life. As a rule, there is more <gap d> satisfaction in life and more obtained <gap e> life in the humble cottage of the poor men <gap f> in the palaces of the rich. I <gap g> pity the sons and daughters of rich men who are attended by <gap h> and have governesses at a later stage; at the same time, I am <gap i> to think they do not <gap j> what they have missed."
+},
+57: {
+    clues: ["improve", "but", "nothing", "time", "lose", "from", "late", "own", "duties", "season", "repent", "soft", "harvest", "grow"],
+    keys: ["own", "duties", "but", "late", "from", "nothing", "season", "soft", "lose", "time"],
+    text: "Man is the maker of his <gap a> fate. If he makes a proper use of his time and does his <gap b> accordingly, he is sure to improve and prosper in life. <gap c> if he does otherwise he is sure to repent when it is too <gap d> and he will have to drag a miserable existence <gap e> day to day. To kill time is as bad as to commit suicide; for our life is <gap f> but the sum total of hours, days and years. Youth is the golden <gap g> of life. In youth the mind is <gap h> and can be shaped in any form you like. If we <gap i> the morning hours of life, we shall have to repent afterwards. It is called the seed <gap j> of life."
+},
+58: {
+    clues: ["spirit", "long", "on", "making", "with", "carry", "position", "for", "see", "planet", "know", "tasks", "from", "already"],
+    keys: ["for", "with", "see", "know", "carry", "making", "long", "position", "already", "on"],
+    text: "Man has an unquenchable thirst <gap a> knowledge. He is never satisfied <gap b> what he has known and seen. He wants to know and <gap c> more and more. This curiosity to <gap d> more coupled with his indomitable spirit of adventure, has inspired him to undertake and <gap e> out difficult and dangerous tasks which eventually resulted in epoch <gap f> discoveries and inventions and led him in his <gap g> journey from his helpless state of a caveman to this present <gap h> of power and progress. In the fields of science and technology man has <gap i> achieved what was once inconceivable. Today he is <gap j> the threshold of the Space Age."
+},
+59: {
+    clues: ["claim", "divine", "miracle", "uniqueness", "should", "produce", "go", "though", "sign", "prophet", "consistently", "argument", "mission", "thief"],
+    keys: ["claims", "miracle", "produced", "uniqueness", "prophet's", "consistently", "divine", "mission", "sign", "though"],
+    text: "The holy Quran <gap a> to be the greatest <gap b> which was vouchsafed to a Prophet. It is a miracle which could not be <gap c> even if all men should be combined. This claim to <gap d> was not an afterthought on the <gap e> part. It was <gap f> advanced as an argument of its <gap g> origin from the <gap h>. When there was no <gap i> of Quran finding any acceptance in Arabia, to say nothing of the whole world, the claim to uniqueness was put forward in the clearest words. 'If men and jin should be combined to produced the like of this Quran, they could not produce the like of it <gap j> some of them were aides of others.'"
+},
+60: {
+    clues: ["forever", "nature", "traditionally", "entertainment", "never", "existence", "unpopular", "popularity", "forms", "very", "appeal", "superseded"],
+    keys: ["nature", "forever", "entertainment", "superseded", "exist", "traditional", "appeal", "popularity", "popularity", "forms"],
+    text: "Change is the order of <gap a> because we know the proverb that old order changed yielding the new. So, nothing remains new <gap b>. The same we do also notice in <gap c>. Old and traditional forms have been <gap d> by new modified and modern forms of entertainment. Many of them don't <gap e> any longer. Today TV channels and satellite have superseded radio, similarly band and pop music have superseded our popular old <gap f> songs. Football is losing its <gap g> more and more. Our ideas about the <gap h> day day and cricket and other games are becoming of entertainment have also changed. We have started to look upon our <gap i> of life in a new way. <gap j>"
+},
+61: {
+    clues: ["truthful", "help", "keep", "characteristics", "theory", "cheat", "dishonest", "easy", "select", "difficult", "judge", "suggestions"],
+    keys: ["judging", "characteristics", "easy", "difficult", "difficulties", "helpful", "keeps", "cheated", "selecting", "suggestions"],
+    text: "It is not easy to understand a man by seeing only his face. Even it is not easy to know about his mentality by <gap a> only his speeches. It is very difficult to examine a man's <gap b> by his outer appearances. So finding a friend is not very <gap c>. It is one of the world's most <gap d> tasks. Real friends are found in our <gap e>. A real friend is always <gap f> in his friend's dangers. He always <gap g> his friends secret secure. We can often be <gap h> by friends. We must remain careful in <gap i> friends. We can have <gap j> from our elders in this regard."
+},
+62: {
+    clues: ["martyrdom", "proud", "become", "after", "case", "prison", "flame", "then", "prevail", "protest", "section", "die"],
+    keys: ["proud", "became", "martyrdom", "after", "case", "prison", "flame", "then", "prevailed", "section"],
+    text: "The person who lays down his life for upholding the cause of motherland, becomes a martyr, Shaheed Dr. Shamsuzzoha is such a <gap a> son of our motherland and he <gap b> during the pre-liberation period of Bangladesh. He embraced <gap c> the first intellectual who courageously <gap d> failing the trumped-up Agartala conspiracy <gap e>. He was killed in <gap f> by the Ayub Khan govt. A <gap g> of protest ablazed seriously throughout the <gap h> East Pakistan. A volatile situation also <gap i> everywhere in the Rajshahi city where <gap j> 144 was enforced to prevent the agitating students from taking part in any protest. But Dr. Zoha came forward with a vigorous procession violating section 144. He was shot dead."
+},
+63: {
+    clues: ["of", "love", "having", "company", "work", "so", "student", "institution", "famous", "failure", "get", "expect"],
+    keys: ["have", "famous", "so", "of", "institution", "working", "getting", "expected", "fail", "students"],
+    text: "Every student expects a glorious result in the examination and for this he tries heart and soul. There are many ways to <gap a> a glorious result. Admission in a <gap b> institution is one of them. <gap c> most of the students dream <gap d> getting admission in a famous <gap e>. Most of the students start <gap f> hard after their final examination for <gap g> admission into their <gap h> institution. Some become successful and some <gap i> in their mission. The <gap j> who don't study hard cannot succeed in this contest."
+},
+64: {
+    clues: ["avoidable", "meet", "unhappy", "may", "punctuality", "habit", "experienced", "making", "growth", "be", "desire", "shame"],
+    keys: ["experience", "shameful", "meeting", "being", "unavoidable", "unhappy", "punctual", "habit", "undesirable", "makes"],
+    text: "To be late for something can be an unhappy <gap a>. One is to be <gap b> of being late for an appointment or a <gap c>. Often one has to give an explanation and apologize for <gap d> late. Sometimes it may be due to <gap e> circumstances like traffic jam, but it is a <gap f> matter. Being late is the opposite word of being <gap g>. Being late can easily <h> into a bad habit. It is <gap i> to be late for anything. Everybody can avoid being late if he <gap j> up his mind to be punctual."
+},
+65: {
+    clues: ["mock", "pronounce", "into", "refer", "infrastructure", "broadcast", "nut", "on", "of", "an", "in", "prolong", "stand"],
+    keys: ["pronounced", "refers", "broadcast", "on", "an", "into", "stand", "infrastructure", "nut", "of"],
+    text: "Digital Bangladesh is now the most <gap a> phrase in our country. The word 'digital' comes from 'digit meaning number which <gap b> to information, music, image etc. that is recorded or <gap c> using computer technology. As computer technology works with '0' and '1' it is called so. '0' means off or absence of electricity and '1' means <gap d> or presence of electricity. It is not <gap e> easy task to transform Bangladesh <gap f> a digitalized country. A number of problems <gap g> on the way. Ours is a poor country and most of the people are illiterate. In order to digitalize the country we have to develop the <gap h>. Corruption is the hardest <gap i> to crack. Above all, most people do not have clear idea <gap j> the term."
+},
+66: {
+    clues: ["tool", "resource", "replace", "human", "threat", "help", "success", "sensitive", "redundancy", "security", "cost", "develop"],
+    keys: ["threaten", "redundancy", "tool", "cost", "resources", "human", "replace", "succeed", "sensitive", "security"],
+    text: "AI in education has both benefits and drawbacks. Some teachers fear that AI may <gap a> their roles, leading to <gap b>. However, AI should be seen as a <gap c> to assist teachers, not replace them. One of the challenges is the <gap d> associated with developing and implementing AI tools, which can be a barrier for schools with limited <gap e>. Another concern is the lack of <gap f> interaction and emotional support that AI tools provide. While AI offers personalized learning, it cannot <gap g> the human connection students need to <gap h>. Over-reliance on AI may have negative impacts on students. Lastly, there are privacy concerns, as AI tools may collect and store <gap i> personal data, raising issues of privacy and <gap j>."
+},
+67: {
+    clues: ["river", "natural", "region", "people", "different", "metaphors", "music", "inequality", "material", "eastern", "great", "composed"],
+    keys: ["great", "composed", "inequality", "material", "riverine", "natural", "people", "different", "region", "eastern"],
+    text: "In Bangladesh folk music has <gap a> variety, with songs being <gap b> on the culture, festivals, views of life, natural beauty, rivers and rural and riverine life. These songs are also about social <gap c> and poverty, about the <gap d> world and the supernatural. Mystical songs have been composed using the metaphors of rivers and boats. Since the country is basically <gap e>, the bhatiyali forms an important genre of folk music. Folk music is formed and developed according to the environment. Differences in the <gap f> environment are reflected in the <gap g> of the <gap h> regions. The dialects too vary across the different regions. Bangladeshi folk music, therefore, varies from <gap i> to region. Thus there are the northern Bhawaiya, the <gap j> Bhatiali and the south-western Baul songs."
+},
+68: {
+    clues: ["commentary", "glorify", "consider", "including", "expression", "art", "aim", "creative", "convey", "appreciate", "skills", "history"],
+    keys: ["expression", "skills", "including", "aim", "considered", "commentary", "glorifies", "convey", "art", "creative"],
+    text: "Art is generally understood as an <gap a> of human imagination and creative <gap b> in a range of activities <gap c> painting, drawing, sculpture and architecture. The <gap d> of art is to evoke feelings and emotions that are <gap e> aesthetic that is, concerned with beauty but art also can be a form of social <gap f>. A painting of sunset over the sea <gap g> nature, but one that shows a war ravaged town can <gap h> a sense of anguish. Throughout the world people appreciate <gap i> for its power to affect them in <gap j> ways."
+},
+69: {
+    clues: ["feathers", "sea", "heat", "plummeted", "complex", "close", "architect", "Icarian", "warning", "sun", "cruelty", "fly"],
+    keys: ["architect", "complex", "cruelty", "feathers", "sun", "sea", "warning", "heat", "plummeted", "Icarian"],
+    text: "Daedalus, a skilled <gap a> and inventor, was tasked with constructing a <gap b> labyrinth on the island of Crete to contain the fearsome Minotaur. After the creature was imprisoned, King Minos, in his <gap c> locked Daedalus and his son, Icarus, in the same maze. To escape, Daedalus crafted wings from <gap d> and wax, warning Icarus not to fly too close to the <gap e> or the <gap f>. Icarus, initially cautious, later ignored his father's <gap g> and soared too high. As a result, the <gap h> melted the wax, and Icarus tragically <gap i> into the sea. Daedalus reached Sicily and named the sea where his son fell the <gap j> Sea in his memory."
+},
+70: {
+    clues: ["advice", "tongue", "live", "soil", "growth", "connect", "challenged", "knowledge", "weather", "verses", "wisdom", "farmer"],
+    keys: ["weather", "verses", "knowledge", "advice", "challenged", "tongue", "live", "connection", "soil", "growth"],
+    text: "Khona originally named Lila, was a woman with a remarkable gift for predicting <gap a>. She shared her knowledge through simple, rhyming <gap b> known as 'Khonar Bochon.' These sayings were filled with deep <gap c> and practical <gap d> for farmers. Khona's advice often <gap e> the ruling class, and they punished her by cutting out her <gap f>. Despite this, her wisdom continued to <gap g> through generations. Her sayings, which are over 1500 years old, show the <gap h> between seasons and <gap i> and the importance of rain for the <gap j> of crops."
+},
+71: {
+    clues: ["nightmare", "dream", "dreamer", "imagine", "real", "haunting", "passionate", "colour", "reverie", "horrible", "whole", "appear"],
+    keys: ["appear", "dream", "haunting", "nightmare", "colour", "imagination", "dreamer", "reality", "reverie", "passionately"],
+    text: "All of us know what a dream is. Generally we dream during our sleep. Dreams may <gap a> to be short or long lasting. Sometimes we say, I dreamt for the whole night! But do we really <gap b> for the whole night? Some dreams are sweet or <gap c>. Some are horrible. When we dream something extremely bad, we call it a <gap d>. This is interesting that dreams have no <gap e>. They are soft, silvery and pleasant. Do you know how the words <gap f> and hallucination differ from dream? Do you know any <gap g>? What do they do? Does dream have any relation with <gap h>? Do we always dream during our sleep? The dream we have during the day time is called <gap i>. Sometimes we long for something so <gap j>. We call that a dream as well."
+},
+72: {
+    clues: ["universe", "biology", "character", "mark", "organize", "communicate", "identify", "early", "economy", "critic", "determinant", "develop"],
+    keys: ["identifies", "development", "characterised", "marking", "determinants", "universal", "defining", "economic", "earlier", "communication"],
+    text: "World Health Organization (WHO) <gap a> adolescence as the period in human growth and <gap b> that occurs after childhood and before adulthood. This phase represents one of the critical transitions in one's lifespan and is <gap c> by fast paced growth and change which are second only to those at infancy. Biological processes drive many aspects of this growth and development with the onset of puberty <gap d> the passage from childhood to adolescence. The biological <gap e> of adolescence are fairly <gap f>; however, the duration and <gap g> characteristics this period may vary across time, cultures and socio <gap h> situations. This period has seen many changes over the past century-puberty for example, comes <gap i> than before, people marry late and their sexual attitudes and behaviour are different from their grandparents, or even parents. Among the factors responsible for the change are education, urbanization and spread of global <gap j>."
+},
+73: {
+    clues: ["stressful", "limit", "unnecessary", "bad", "reasons", "psychological", "rush", "part", "unhappiness", "depend", "satisfied", "addiction"],
+    keys: ["reasons", "part", "depending", "limit", "stressful", "bad", "unhappiness", "satisfied", "rush", "psychological"],
+    text: "We spend money for different <gap a>. Spending is a <gap b> of our life. Spending may make us happy or unhappy <gap c> on how and why we spend. When we spend money on things that we need and within our <gap d> it is good. When it becomes a compulsive behaviour, it makes life <gap e>. Unnecessary spending or spending beyond one's means has some <gap f> effects. For one thing, it may lead to financial ruin or debt, and for another, it may create <gap g> within families. People who overspend are never <gap h> with what they have. They always <gap i> for brands, fashion items, designer clothes, etc. Over a period of time, it becomes an addiction which may eventually create <gap j> problems."
+},
+74: {
+    clues: ["dreams", "reality", "overflowing", "strugles", "children", "suffer", "siege", "fear", "fly", "sea", "poverty", "hope"],
+    keys: ["poverty", "siege", "children", "sea", "dreams", "reality", "overflowing", "fly", "fear", "struggles"],
+    text: "Gaza is a place filled with <gap a> hardship, and sadness. The people face <gap b> and deprivation in their daily lives. Even the <gap c>, animals, and stones seem to cry out in despair. Standing by the <gap d> offers a brief escape, allowing <gap e> of travelling to Paris and other distant places. However, the <gap f> of Gaza brings back the harsh reality of crowded markets and <gap g> sewage. The constant fear of war is so intense that even a <gap h> landing on a loved one causes panic. The speaker's fear is so great that they often escape to avoid the <gap i>. Yet, no matter where they go, the <gap j> of Gaza remains with them."
+},
+75: {
+    clues: ["humans", "animal", "jungles", "animists", "experience", "loneliness", "violent", "communicate", "affection", "live", "presence", "alone"],
+    keys: ["jungles", "animal", "communicate", "presence", "alone", "violent", "humans", "loneliness", "experience", "animists"],
+    text: "The Nayaka people live in the <gap a> of southern India, where they gather roots and tubers. When they encounter a dangerous <gap b> like a tiger or snake, they often <gap c> with it, explaining their <gap d>. A tragic incident occurred when one Nayaka was killed by an elephant known for walking <gap e>. Although the government wanted to capture the elephant, the Nayaka refused to assist, believing the elephant was <gap f> due to the loss of its close friend. This elephant had witnessed its companion being shot by <gap g> which caused it great anger and <gap h>. The Nayaka emphasized the importance of understanding how animals might <gap i> their feelings, likening it to human experiences of loss. Scientists refer to people who think animals can communicate and possess spirits as <gap j>."
+},
+76: {
+    clues: ["particularly", "benefits", "positive", "enjoyed", "disproportionately", "preserve", "shortsighted", "burdens", "equal", "facts", "interconnected", "share"],
+    keys: ["interconnected", "shortsighted", "particularly", "disproportionately", "benefits", "enjoyed", "facts", "positive", "equal", "burdens"],
+    text: "Environmental Justice is a movement that highlights the <gap a> connection between human actions and environmental disasters. These disasters often arise from <gap b> practices that harm vulnerable groups, <gap c> poor people and women. The movement argues that the negative effects of environmental damage are not evenly distributed; instead, they <gap d> impact the world's poor, who are primarily people of color. Conversely, the <gap e> of resource over consumption are primarily <gap f> by a small, privileged segment of the population. Environmental Justice aims to make these <gap g> clear to everyone and unite people for <gap h> change. Ultimately, it advocates for <gap i> sharing of both environmental <gap j> and benefits among all individuals, regardless of their socio-economic status."
+},
+77: {
+    clues: ["improved", "fertility", "nutrients", "returning", "straw", "soil", "adopt", "importance", "revitalized", "essential", "microorganisms", "cultivate"],
+    keys: ["importance", "improved", "microorganisms", "fertility", "adopt", "straw", "returning", "nutrients", "revitalized", "essential"],
+    text: "The agricultural practices promoted today often highlight the <gap a> of scientific techniques and the so-called 'Green Revolution.' These methods rely on <gap b> seed varieties, which require frequent applications of chemicals during the growing season. As a result; the soil becomes depleted of <gap c> and essential nutrients. This situation arises not because nature is incapable of supporting crops, but because the <gap d> of the soil has been compromised. To restore the land, farmers can <gap e> methods such as spreading <gap f> and using cover crops like clover. By <gap g> organic-matter to the soil, it can regain its <gap h> and sustain rice cultivation continuously without chemical reliance. Over time, even fields that have suffered from chemical use can be <gap i> through natural farming practices. It is important to remember that healthy soil is <gap j> for productive agriculture."
+},
+78: {
+    clues: ["undergo", "place", "democracy", "trial", "negotiation", "offenses", "end", "uprising", "throughout", "charge"],
+    keys: ["throughout", "charged", "offenses", "trial", "place", "undergo", "uprising", "end", "negotiation", "democracy"],
+    text: "Nelson Mandela was one of the greatest leaders of the world. <gap a> his life, he fought against racism. He was <gap b> with capital <gap c> in historic Revonia <gap d> case. The trial took <gap e> in 1963. This great leader had to <gap f> 30 years' imprisonment. A serious <gap g> broke out in the state when he was behind the bar. However, the South African white leaders realized the truth to bring an <gap h> to the malpractice. Then Nelson Mandela was released and after <gap i> the problem was at last solved and South Africa enjoyed true <gap j>."
+},
+79: {
+    clues: ["encourage", "borrow", "philosophy", "desire", "as well as", "Bengali", "set", "expect", "acquaint", "self-respect", "familiar", "extra"],
+    keys: ["as well as", "philosophy", "desire", "Bengali", "setting", "expected", "acquainted", "self-respect", "encourage", "borrowed"],
+    text: "Rabindranath Tagore was an outstanding poet <gap a> a very committed educator. He had his own <gap b> of education and <gap c> to transform teaching and learning in <gap d>. While <gap e> up a university, Tagore <gap f> that it would be truly eastern. According to Tagore, Indian students should be <gap g> with the best products of the Indian mind. Modern Indian universities lower our <gap h> and <gap i> us to make a foolish display of decorations of <gap j> feathers."
+},
+80: {
+    clues: ["a", "and", "ban", "on", "movement", "seeking", "achieve", "British", "neuritis", "goals"],
+    keys: ["seeking", "on", "movement", "ban", "goals", "achieve", "and", "and", "British", "a"],
+    text: "A peace movement is a social movement <gap a> to achieve some ideals. Peace movement gives stress <gap b> minimizing inter human violence in a particular place or type of situation. No peace <gap c> allows guns to be illegally used. So it emphasizes <gap d> on illegal weapons, Infact, peace movement wants to achieve some <gap e> and to <gap f> these goals advocacy of pacifism, nonviolent resistance, diplomacy <gap g> like are badly needed. There are some peace movements in the world. Some are American <gap h> some are <gap i> British Movement. Olive leaf circles is <gap j> British Movement."
+},
+81: {
+    clues: ["toward", "abstract", "experience", "potential", "adulthood", "maturation", "acquisition", "independent", "relationship", "find", "development", "take", "help"],
+    keys: ["adulthood", "experiences", "developments", "maturation", "toward", "independence", "acquisition", "relationship", "abstract", "potential"],
+    text: "The time of adolescence is a period of preparation for <gap a> during which one <gap b> several key <gap c>. Besides physical and sexual <gap d>, these experiences include movement <gap e> social and economic <gap f>, development of identity, the <gap g> of skills needed to carry out adult <gap h> and roles and the capacity for <gap i> reasoning. While adolescence is a time of tremendous growth and <gap j>, it is also a time of considerable risks during which social contexts exert powerful influences."
+},
+82: {
+    clues: ["speak", "learning", "play", "drink", "take", "implies", "where", "relax", "have", "supportive", "enjoyable", "disabilities", "think", "tough"],
+    keys: ["implies", "have", "learning", "where", "enjoyable", "supportive", "relaxed", "spoken", "taken", "disabilities"],
+    text: "Children's right to education also <gap a> that the school they go to will <gap b> a pleasant and <gap c> friendly environment <gap d> everyone will have an <gap e> time. Teachers will be kind, caring and <gap f> and children will feel <gap g>. No harsh words will be <gap h> to them and special care will be <gap i> of children with learning <gap j>."
+},
+83: {
+    clues: ["eve", "drink", "body", "important", "journey", "that", "in", "narrates", "cannot", "clean"],
+    keys: ["narrates", "journey", "drink", "important", "cannot", "body", "that", "in", "clean", "eve"],
+    text: "Coleridge' poem, a ballad, <gap a> the harrowing sea-voyage of an old mariner who at one point of his <gap b> didn't have any water to <gap c>. Cursed or not, we know how <gap d> drinking water is in our life. We know we <gap e> survive without it. In fact two-thirds of our <gap f> is made up of water. Not for nothing is it said <gap g> the other name of water is life. Is there a crisis <gap h> of the new regard to access to <gap i> drinking water? The United Nations in a meeting on the <gap j> of the new millennium identified the drinking water problem as one of the challenges for the future."
+},
+84: {
+    clues: ["difficulties", "define", "kind", "beholder", "dependent", "independent", "laugh", "manifests", "around", "clear", "pleasure", "joint"],
+    keys: ["around", "pleasurable", "laughter", "kindness", "define", "difficulties", "independent", "dependent", "beholder", "manifests"],
+    text: "Beauty is easy to appreciate but difficult to define. As we look <gap a> we discover beauty in <gap b> objects and sights in nature, in the <gap c> of children, in the <gap d> of strangers. But asked to <gap e> we run into <gap f>. Does beauty have an <gap g> objective identity? Is it universal, or is it <gap h> on our sense perceptions? Does it lie in the eye of the <gap i> we ask ourselves. A further difficulty arises when beauty <gap j> itself not only by its presence, but by its absence as well, as when we are repulsed by ugliness and desire beauty."
+},
+85: {
+    clues: ["development", "education", "for", "him", "and", "helps", "called", "has", "he", "is", "man"],
+    keys: ["him", "he", "and", "man", "helps", "is", "and", "has", "for", "called"],
+    text: "Proper education provides a learner with opportunities to improve all his talents. Its aim is to develop <gap a> physically and mentally so that <gap b> can be useful to himself <gap c> to the society. An educated <gap d> is self-reliant, but he also <gap e> others in attaining self-reliance. He <gap f> supposed to be well-mannered, kind <gap g> sympathetic. So a man who <gap h> acquired knowledge and skill only <gap i> his material development cannot be <gap j> a truly educated man."
+},
+86: {
+    clues: ["consider", "need", "foul", "conversation", "sure", "eat", "meal", "social", "messy", "public", "sound", "like"],
+    keys: ["social", "conversation", "eating", "consider", "publicly", "need", "sound", "foul", "sure", "messy"],
+    text: "Dinner is meant to be <gap a>. Make sure you take part in the dinner <gap b> and also take note if it seems like you're <gap c> much faster or much slower than everyone else. By the end of the meal, some people take a few glasses of water in gulps and some people <gap d> it worthy to belch out <gap e> which are weird. If drinking water is a <gap f> take in little sips without making any <gap g> and wipe your lips. Don't sneeze or make any <gap h> sounds to clean your throat in front of others. Make <gap i> you are not scattering foods around your plate. Nobody likes to experience a <gap j> dining table around."
+},
+87: {
+    clues: ["higher", "affect", "clogging", "appealing", "addiction", "more", "consist", "unhealthy", "increase", "popular", "reject", "lack"],
+    keys: ["consisting", "appealing", "more", "increases", "higher", "clogging", "affects", "addiction", "rejection", "lack"],
+    text: "Junk foods are processed foods <gap a> of high calories, but that is considered only as a broad umbrella. These foods are prepared in a way that they look <gap b> and are enjoyable so you are chemically programmed to ask for <gap c>. Frequent consumption of junk food <gap d> the intake of excess fat, simple carbohydrates and processed sugar which may lead to a <gap e> risk of obesity and cardiovascular diseases among other chronic health problems. The resulting obesity may begin <gap f> up the arteries and lay the basis of an impending heart attack. It has also been suggested that eating junk food <gap g> the brain in the same way as a consuming addictive drugs. An <gap h> to junk food may even result in the <gap i> of healthier food options like fruits, vegetables, salads, etc. leading to further <gap j> of nourishment."
+},
+88: {
+    clues: ["gentleperson", "appreciate", "proper", "realize", "offend", "follow", "keep up", "accepted", "are", "behave", "manners", "social"],
+    keys: ["manners", "are", "accepted", "behave", "offended", "realize", "keep up", "proper", "appreciate", "gentleperson"],
+    text: "I know sometimes <gap a> and etiquette seem arbitrary. But at the end of the day, these guidelines <gap b> established as a universal set of <gap c> behavior so that we can all <gap d> civilly around each other. Not everyone is going to be <gap e> if you don't follow these guidelines. But once you learn these basic table manners, you <gap f> that they're not difficult to <gap g>. So, why not practice <gap h> dining etiquette? It certainly isn't hard to try, and many people will <gap i> that you are conscientious enough to behave like a <gap j> at the table."
+},
+89: {
+    clues: ["rumours", "fake", "victimize", "technology", "nonstop", "offence", "punish", "harm", "anonymous", "threaten", "torture", "crime"],
+    keys: ["technology", "harm", "threatening", "rumours", "fake", "anonymous", "victimized", "nonstop", "punishable", "offence"],
+    text: "Cyber bullying is the use of <gap a> to harass, threaten, embarrass or target another person. A few examples of cyber bullying are causing someone <gap b> by posting unwanted or private information, <gap c> a person by sending mean messages via emails, socials networking websites, text or audio messages, spreading <gap d> via email or social networking sites, sharing private/embarrassing pictures, creating <gap e> profiles, etc. Online bullying can be particularly damaging and upsetting because it is usually <gap f> or hard to trace. It is hard to control, and the person being <gap g> has no idea how many people have seen the messages or posts. People can be tormented <gap h> whenever they check their devices or computers. In Bangladesh, cyber bullying is not just an act to be scorned at but is an offence <gap i> under the Information and Communication Technology (ICT) Act 2006. The punishment for such an <gap j> is imprisonment and/or fine."
+},
+90: {
+    clues: ["contribute", "voices", "concerned", "difference", "ills", "outcome", "members", "use", "appreciate", "promote", "responsible", "teach"],
+    keys: ["appreciated", "difference", "using", "promotes", "contributing", "members", "concerned", "responsible", "voices", "ills"],
+    text: "Learners' civic engagement is highly <gap a> all over the world. Civic engagement means working to make a <gap b> in the civic life of the community <gap c> knowledge, skills, values and motivation. Civic engagement <gap d> the quality of life in a community by <gap e> to the improvement of health and wellbeing of the <gap f> of a larger social community and are <gap g> about civic issues. They consider themselves <gap h> citizens who take action or raise their <gap i> against injustice, discrimination and other forms of social <gap j>."
+},
+91: {
+    clues: ["chop", "troublesome", "orphanage", "pumpkin", "blow", "high", "asked", "belonged", "learn", "be", "beyond"],
+    keys: ["high", "troublesome", "blow", "homesick", "pumpkins", "belonged", "beyond", "orphanage", "asked", "chop"],
+    text: "The orphanage is <gap a> in the Carolina mountains. I was there in the autumn. I wanted quiet, isolation, to do some <gap b> writing. I wanted mountain air to <gap c> out the malaria from too long a time in the subtropics. I was <gap d> too, for the flaming of maples in October, and for corn shocks and <gap e> black-walnut trees... I found them all living in a cabin that <gap f> to the orphanage, half a mile <gap g> the <gap h> farm. When I took the cabin, I <gap i> for a boy or man to come and <gap j> wood for the fireplace."
+},
+92: {
+    clues: ["grave", "independent", "back", "since", "and", "wakened", "had", "picture", "until", "against", "texture", "power", "in"],
+    keys: ["wakened", "texture", "back", "had", "against", "until", "since", "picture", "grave", "independence"],
+    text: "At daylight I was half <gap a> by the sound of chopping. Again it was so even <gap b> that I went <gap c> to sleep. When I left my bed in the cool morning, the boy <gap d> come and gone, and a stack of kindling was neat <gap e> the cabin wall. He came after school in the afternoon and worked <gap f> time to return to the orphanage. His name was Jerry..... he had been at the orphanage <gap g> he was four. I could <gap h> him at four, with the same <gap i> gray-blue eyes and the same <gap j>? No, the word that comes to me is 'integrity' and it is bedded on courage, but it is more than brave. It is honest, but it is more than honesty."
+},
+93: {
+    clues: ["without", "recent", "river", "face", "last", "native", "clothes", "farther", "by", "take", "across", "cause"],
+    keys: ["by", "across", "clothes", "river", "without", "farther", "native", "face", "last", "was taking/took"],
+    text: "An old man sat <gap a> the side of the road beside a pontoon bridge <gap b>. The man had steel rimmed spectacles and very dusty <gap c>. Carts, trucks, and men, women; and children were crossing the <gap d>. The old man sat there <gap e> moving because he was too tired to go any <gap f>. The man came from San Carlos, his <gap g> town. The name brought smile to his <gap h> because he <gap i> the <gap j> man to leave the town because he care of the animals."
+},
+94: {
+    clues: ["teach", "competitive", "learn", "teacher", "future", "competencies", "only", "circumstances", "increase", "nature", "ability", "appreciate"],
+    keys: ["competencies", "competitive", "circumstances", "appreciate", "only", "teacher", "nature", "learn", "teach", "future"],
+    text: "Education fosters critical thinking and provides us a set of <gap a> including life skills that enable us to become <gap b> even in the most challenging <gap c>. Education also teaches us to <gap d> beauty and the bounties of nature. School, however, is not the <gap e> place where a child gets education. Nature can be our best <gap f>. If we can make <gap g> our friend, philosopher and guide, we can <gap h> lessons about life that, combined with what our schools <gap i> us, will prepare us for the <gap j>."
+},
+95: {
+    clues: ["common", "illegal", "vulnerable", "majority", "uninformed", "rights", "continue", "mortal", "problem", "support", "pay", "include"],
+    keys: ["vulnerable", "including", "common", "pay", "illegal", "continue", "supportive", "majority", "uninformed", "mortality"],
+    text: "When a girl gets married, she usually drops out of school and begins full-time work in her in-laws' household. In the in-laws' house, she is marginalized. She becomes <gap a> to all forms of abuse, <gap b> dowry-related violence. In Bangladesh, it is still <gap c> for a bride's family to <gap d> dowry, despite the practice being <gap e>. Dowry demands can also <gap f> after the wedding. For an adolescent bride, even if her in-laws are <gap g> there are greater health risks in terms of pregnancy and child birth. The <gap h> of adolescent bride's and their families are <gap i> or insufficiently informed about reproductive health and contraception. The maternal <gap j> rate for adolescents is double the national rate."
+}
+        };
+
+        let activeIndex = 1;
+        const totalQuestions = 95;
+
+        const selector = document.getElementById('questionSelector');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const metaBox = document.getElementById('metaInfo');
+        const clueBox = document.getElementById('clueBox');
+        const passageBox = document.getElementById('passageBox');
+        const submitBtn = document.getElementById('submitBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultPanel = document.getElementById('resultPanel');
+        const reviewSection = document.getElementById('reviewSection');
+        const reviewGrid = document.getElementById('reviewGrid');
+
+        // Setup drop-down options
+        for (let i = 1; i <= totalQuestions; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `Question ${i}`;
+            selector.appendChild(opt);
+        }
+
+        function loadQuestion(id) {
+            activeIndex = parseInt(id);
+            selector.value = activeIndex;
+            metaBox.textContent = `Question ${activeIndex} of ${totalQuestions}`;
+            
+            // Clean view states
+            resultPanel.style.display = 'none';
+            reviewSection.style.display = 'none';
+            
+            const q = database[activeIndex];
+            
+            // Build clues element block
+            clueBox.innerHTML = '';
+            q.clues.forEach(word => {
+                const span = document.createElement('div');
+                span.className = 'clue-item';
+                span.textContent = word;
+                clueBox.appendChild(span);
+            });
+
+            // Convert textual placeholders to dynamic html form items safely
+            let formattedText = q.text;
+            const alphabet = ['a','b','c','d','e','f','g','h','i','j'];
+            
+            alphabet.forEach((letter, i) => {
+                const target = `<gap ${letter}>`;
+                const replacement = `
+                    <span class="gap-label">(${letter})</span>
+                    <input type="text" class="gap-input" data-index="${i}" autocomplete="off">
+                `;
+                formattedText = formattedText.split(target).join(replacement);
+            });
+            
+            passageBox.innerHTML = formattedText;
+        }
+
+        function evaluateAnswers() {
+            const inputs = document.querySelectorAll('.gap-input');
+            const targetData = database[activeIndex];
+            let correctCount = 0;
+
+            inputs.forEach(input => {
+                const idx = parseInt(input.getAttribute('data-index'));
+                const studentAns = input.value.trim().toLowerCase();
+                const officialAns = targetData.keys[idx].toLowerCase();
+
+                // Validation logic setup for flexible keys like "Certainly/Both" or alternate slashes
+                let matchOptions = officialAns.split('/');
+                let isCorrect = matchOptions.some(option => option.trim() === studentAns);
+
+                if (isCorrect && studentAns !== "") {
+                    input.className = 'gap-input correct-ans';
+                    correctCount++;
+                } else {
+                    input.className = 'gap-input wrong-ans';
+                }
+            });
+
+            // Render score breakdown (0.5 marks per item)
+            const calculatedMark = (correctCount * 0.5).toFixed(1);
+            resultPanel.innerHTML = `Score: <span style="color: var(--success);">${calculatedMark}</span> / 5.0 (${correctCount}/10 correct)`;
+            resultPanel.style.display = 'block';
+
+            // Present Answer key lists safely inside the grid layout
+            reviewGrid.innerHTML = '';
+            const labels = ['a','b','c','d','e','f','g','h','i','j'];
+            targetData.keys.forEach((key, idx) => {
+                const item = document.createElement('div');
+                item.className = 'review-item';
+                item.innerHTML = `<strong>(${labels[idx]})</strong> ${key}`;
+                reviewGrid.appendChild(item);
+            });
+            reviewSection.style.display = 'block';
+        }
+
+        // Action controllers bindings
+        submitBtn.addEventListener('click', evaluateAnswers);
+        
+        resetBtn.addEventListener('click', () => {
+            loadQuestion(activeIndex);
+        });
+
+        selector.addEventListener('change', (e) => {
+            loadQuestion(e.target.value);
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (activeIndex > 1) loadQuestion(activeIndex - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (activeIndex < totalQuestions) loadQuestion(activeIndex + 1);
+        });
+
+        // Instantiate first item load implicitly
+        loadQuestion(1);
+    </script>
+</body>
+</html>
