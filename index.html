@@ -223,6 +223,34 @@
             color: #64748b;
         }
     </style>
+
+    <script>
+        document.addEventListener('keydown', function(event) {
+    // Check if the pressed key is Left Arrow (37) or Right Arrow (39)
+    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+        
+        // Find all input gaps on the page (adjust the selector if you use a specific class like '.gap')
+        const inputs = Array.from(document.querySelectorAll('input[type="text"], input:not([type])'));
+        const activeElement = document.activeElement;
+        
+        // Find the index of the currently focused input
+        const currentIndex = inputs.indexOf(activeElement);
+        
+        // If the cursor is currently in one of the gaps
+        if (currentIndex !== -1) {
+            if (event.key === 'ArrowRight' && currentIndex < inputs.length - 1) {
+                // Prevent default arrow behavior (moving cursor within the text) if desired, 
+                // or remove event.preventDefault() if you want both behaviors.
+                event.preventDefault(); 
+                inputs[currentIndex + 1].focus(); // Move to next gap
+            } else if (event.key === 'ArrowLeft' && currentIndex > 0) {
+                event.preventDefault();
+                inputs[currentIndex - 1].focus(); // Move to previous gap
+            }
+        }
+    }
+});
+    </script>
 </head>
 <body>
 
